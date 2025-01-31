@@ -33,7 +33,6 @@ class Discriminator(nn.Module):
 if __name__ == '__main__':
     disc = Discriminator()
     img = torch.randn(64, 3, 64, 64)
-    
     output = disc(img)
     
     summary(disc, (64, 3, 64, 64))

@@ -46,7 +46,7 @@ class Generator(nn.Module):
 
 if __name__ == '__main__':
     gen = Generator()
-    z = torch.randn(64, 100)
-    z = z.view(z.size(0), 100, 1, 1) 
+    z = torch.randn(64, 100, 1, 1)
+    output = gen(z)
 
     summary(gen, (64, 100, 1, 1))
