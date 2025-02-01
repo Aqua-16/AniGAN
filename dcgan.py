@@ -73,7 +73,7 @@ class DCGAN(nn.Module):
             for real_images in dataloader:
                 real_images = real_images.to(device)
                 loss_dict = self.train_step(real_images)
-                print("|", end = "", flush = True)
+                print("|", end = "", flush = True) # TODO: Setup progress bar
             
             print(f"Epoch [{epoch+1}/{epochs}], D Loss: {loss_dict['d_loss']:.4f}, G Loss: {loss_dict['g_loss']:.4f}", flush = True)
     
