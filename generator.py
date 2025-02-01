@@ -5,7 +5,7 @@ from torchinfo import summary
 class Generator(nn.Module):
     def __init__(self, noise_dim = 100, feature_maps = 64):
         super(Generator, self).__init__()
-        
+        self.noise_dim = noise_dim
         self.model = nn.Sequential(
             nn.ConvTranspose2d(noise_dim, feature_maps * 8, 4, 2, 0, bias=False),
             nn.BatchNorm2d(feature_maps * 8),

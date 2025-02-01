@@ -27,12 +27,14 @@ class CustomDataset(Dataset):
             image = self.transform(image)
         return image
 
-# Transform image for standard processing
-transform = transforms.Compose([
-    transforms.Resize(64),
-    transforms.ToTensor(),
-    transforms.Normalize((0.5,0.5,0.5),(0.5,0.5,0.5)),
-])
 
-dataset = CustomDataset(root_dir = "images", transform=transform)
-dataloader = DataLoader(dataset,batch_size=64, shuffle=True)
+if __name__ == '__main__':
+    # Transform image for standard processing
+    transform = transforms.Compose([
+        transforms.Resize(64),
+        transforms.ToTensor(),
+        transforms.Normalize((0.5,0.5,0.5),(0.5,0.5,0.5)),
+    ])
+
+    dataset = CustomDataset(root_dir = "images", transform=transform)
+    dataloader = DataLoader(dataset, batch_size=64, shuffle=True)
