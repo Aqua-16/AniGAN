@@ -67,11 +67,21 @@ class DCGAN(nn.Module):
 
         return {'d_loss': d_loss.item(), 'g_loss': g_loss.item()}
     
+    def train(self, dataloader, epochs):
+
+        for epoch in range(epochs):
+            for real_images in dataloader:
+                real_images = real_images.to(device)
+                loss_dict = self.train_step(real_images)
+                print("|", end = "", flush = True)
+            
+            print(f"Epoch [{epoch+1}/{epochs}], D Loss: {loss_dict['d_loss']:.4f}, G Loss: {loss_dict['g_loss']:.4f}", flush = True)
+    
 if __name__ == '__main__':
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     transform = transforms.Compose([
-        transforms.Resize(64),
+        transforms.Resize((64,64)),
         transforms.ToTensor(),
         transforms.Normalize((0.5,0.5,0.5),(0.5,0.5,0.5)),
     ])
@@ -89,7 +99,11 @@ if __name__ == '__main__':
     model = DCGAN(G, D)
     model.compile(g_optimizer, d_optimizer, loss)
 
-    real_images = next(iter(dataloader)).to(device)
-    loss_dict = model.train_step(real_images)
+    n = int(input("Batch Train (1/0)?: "))
+    if(n==0):
+        real_images = next(iter(dataloader)).to(device)
+        loss_dict = model.train_step(real_images)
 
-    print(loss_dict)
+        print(loss_dict)
+    else:
+        model.train(dataloader, 1)
