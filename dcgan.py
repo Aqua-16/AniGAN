@@ -6,6 +6,7 @@ import torch.optim as optim
 import generator
 import discriminator
 import data
+from alive_progress import alive_bar
 
 
 class DCGAN(nn.Module):
@@ -68,14 +69,19 @@ class DCGAN(nn.Module):
         return {'d_loss': d_loss.item(), 'g_loss': g_loss.item()}
     
     def train(self, dataloader, epochs):
+        n = len(dataloader)
+        with alive_bar(n, title_length = 15, bar = 'blocks', spinner = 'vertical', dual_line = True) as bar:
+            for epoch in range(epochs):
+                bar.title(f"Epoch [{epoch+1}/{epochs}]")
 
-        for epoch in range(epochs):
-            for real_images in dataloader:
-                real_images = real_images.to(device)
-                loss_dict = self.train_step(real_images)
-                print("|", end = "", flush = True) # TODO: Setup progress bar
-            
-            print(f"Epoch [{epoch+1}/{epochs}], D Loss: {loss_dict['d_loss']:.4f}, G Loss: {loss_dict['g_loss']:.4f}", flush = True)
+                for real_images in dataloader:
+                    real_images = real_images.to(device)
+                    loss_dict = self.train_step(real_images)
+                    bar.text(f"D Loss: {loss_dict['d_loss']:.4f}, G Loss: {loss_dict['g_loss']:.4f}")
+                    bar()
+                    
+                if((epoch+1)!=epochs): 
+                    bar(-n)
     
 if __name__ == '__main__':
 
@@ -99,11 +105,11 @@ if __name__ == '__main__':
     model = DCGAN(G, D)
     model.compile(g_optimizer, d_optimizer, loss)
 
-    n = int(input("Batch Train (1/0)?: "))
+    n = int(input("Epochs: "))
     if(n==0):
         real_images = next(iter(dataloader)).to(device)
         loss_dict = model.train_step(real_images)
 
         print(loss_dict)
     else:
-        model.train(dataloader, 1)
+        model.train(dataloader, n)
