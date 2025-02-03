@@ -1,6 +1,6 @@
 import torch
 from torchvision import transforms
-from torch.utils.data import DataLoader, Dataset
+from torch.utils.data import DataLoader
 import torch.nn as nn
 import torch.optim as optim
 import generator
@@ -85,6 +85,7 @@ class DCGAN(nn.Module):
                     callback(epoch)
                 if((epoch+1)!=epochs): 
                     bar(-n)
+        
     
 if __name__ == '__main__':
 
