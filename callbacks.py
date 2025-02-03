@@ -4,11 +4,11 @@ from torchvision.utils import save_image
 import os
 
 class VisualizeGeneratorCallback:
-    def __init__(self, epoch, generator, batch_size = 64, noise_dim = 100, device = "cpu", save_dir = "sample_images"):
+    def __init__(self, epoch, generator, batch_size = 64, device = "cpu", save_dir = "sample_images"):
         self.show_at_epoch = epoch
-        self.noise_dim = noise_dim
         self.batch_size = batch_size
         self.generator = generator
+        self.noise_dim = self.generator.noise_dim
         self.device = device
         self.save_dir = save_dir
 
@@ -23,7 +23,8 @@ class VisualizeGeneratorCallback:
                 fake_images = self.denormalize(fake_images)
                 save_image(fake_images, f"{self.save_dir}/generated_images_batch_{epoch+1}.png", nrow=8, normalize=False)
             self.generator.train()
-
+    
+    @staticmethod
     def denormalize(tensor):
         return tensor * 0.5 + 0.5
 
