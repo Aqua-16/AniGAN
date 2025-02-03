@@ -6,6 +6,7 @@ import torch.optim as optim
 import generator
 import discriminator
 import data
+import callbacks as c
 from alive_progress import alive_bar
 
 
@@ -68,7 +69,7 @@ class DCGAN(nn.Module):
 
         return {'d_loss': d_loss.item(), 'g_loss': g_loss.item()}
     
-    def train(self, dataloader, epochs):
+    def train(self, dataloader, epochs, callbacks=[]):
         n = len(dataloader)
         with alive_bar(n, title_length = 15, bar = 'blocks', spinner = 'vertical', dual_line = True) as bar:
             for epoch in range(epochs):
@@ -79,7 +80,9 @@ class DCGAN(nn.Module):
                     loss_dict = self.train_step(real_images)
                     bar.text(f"D Loss: {loss_dict['d_loss']:.4f}, G Loss: {loss_dict['g_loss']:.4f}")
                     bar()
-                    
+                
+                for callback in callbacks:
+                    callback(epoch)
                 if((epoch+1)!=epochs): 
                     bar(-n)
     
@@ -112,4 +115,7 @@ if __name__ == '__main__':
 
         print(loss_dict)
     else:
-        model.train(dataloader, n)
+        
+        vis_callback = c.VisualizeGeneratorCallback(1, G, 64, device)
+        save_callback = c.CheckpointCallback(1, G, D)
+        model.train(dataloader, n, callbacks=[vis_callback, save_callback])
