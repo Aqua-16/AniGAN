@@ -1,3 +1,6 @@
+#TODO: Fix convergence issue
+#TODO: Fix mode collapse
+
 import torch
 from torchvision import transforms
 from torch.utils.data import DataLoader
@@ -13,6 +16,7 @@ from alive_progress import alive_bar
 class DCGAN(nn.Module):
     def __init__(self, generator, discriminator):
         super(DCGAN, self).__init__()
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.generator = generator
         self.discriminator = discriminator
 
@@ -28,22 +32,21 @@ class DCGAN(nn.Module):
     def train_step(self, real_images):
 
         batch_size = real_images.size(0)
-        device = real_images.device
-        noise_vector = torch.randn(batch_size, self.generator.noise_dim, 1, 1, device=device)
+        noise_vector = torch.randn(batch_size, self.generator.noise_dim, 1, 1, device=self.device)
 
         # Training discriminator
 
         self.d_optim.zero_grad()
 
         pred_real = self.discriminator(real_images)
-        real_labels = torch.ones(batch_size, 1, device=device).to(device)
+        real_labels = torch.ones(batch_size, 1, device=self.device).to(self.device)
         real_labels -= 0.05 * torch.rand_like(real_labels) # Found Error!!!
         assert pred_real.size() == real_labels.size(), f"Mismatch Shapes {pred_real.size()}\n{real_labels.size()}" 
         assert pred_real.device == real_labels.device, "Mismatch devices"
         d_loss_real = self.loss_fn(pred_real, real_labels)
 
         fake_images = self.generator(noise_vector).detach()
-        fake_labels = torch.zeros(batch_size, 1, device=device).to(device)
+        fake_labels = torch.zeros(batch_size, 1, device=self.device).to(self.device)
         pred_fake = self.discriminator(fake_images)
         d_loss_fake = self.loss_fn(pred_fake, fake_labels)
 
@@ -57,15 +60,12 @@ class DCGAN(nn.Module):
         self.g_optim.zero_grad()
 
         fake_images = self.generator(noise_vector)
-        labels = torch.ones(batch_size, 1, device=device).to(device)
+        labels = torch.ones(batch_size, 1, device=self.device).to(self.device)
         pred = self.discriminator(fake_images)
         g_loss = self.loss_fn(pred, labels)
 
         g_loss.backward()
         self.g_optim.step()
-
-        self.d_loss_history.append(d_loss.item())
-        self.g_loss_history.append(g_loss.item())
 
         return {'d_loss': d_loss.item(), 'g_loss': g_loss.item()}
     
@@ -76,10 +76,13 @@ class DCGAN(nn.Module):
                 bar.title(f"Epoch [{epoch+1}/{epochs}]")
 
                 for real_images in dataloader:
-                    real_images = real_images.to(device)
+                    real_images = real_images.to(self.device)
                     loss_dict = self.train_step(real_images)
                     bar.text(f"D Loss: {loss_dict['d_loss']:.4f}, G Loss: {loss_dict['g_loss']:.4f}")
                     bar()
+                
+                self.d_loss_history.append(loss_dict['d_loss'])
+                self.g_loss_history.append(loss_dict['g_loss'])
                 
                 for callback in callbacks:
                     callback(epoch)

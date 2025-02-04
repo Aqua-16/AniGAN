@@ -13,3 +13,6 @@ def plot_model(epoch, gen_loss, disc_loss):
     plt.title("Training History", color="white")
     plt.legend()
     plt.grid(True, linestyle="--", alpha=0.5)
+
+    plt.savefig("graph.png")
+    plt.show()
