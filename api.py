@@ -20,10 +20,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 app.mount("/generated", StaticFiles(directory="generated"), name="generated")
+checkpoint_path = os.path.join("checkpoints", "generator_epoch_20.pth")
 G = Generator().to('cpu')
-G.load_state_dict(torch.load(r'checkpoints\generator_epoch_20.pth'))
+G.load_state_dict(torch.load(checkpoint_path, map_location='cpu'))
 D = Discriminator().to('cpu')
-D.load_state_dict(torch.load(r'checkpoints\discriminator_epoch_20.pth'))
+checkpoint_path = os.path.join("checkpoints", "discriminator_epoch_20.pth")
+D.load_state_dict(torch.load(checkpoint_path, map_location='cpu'))
 model = DCGAN(G, D)
 
 
