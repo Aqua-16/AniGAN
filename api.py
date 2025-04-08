@@ -21,9 +21,9 @@ app.add_middleware(
 )
 app.mount("/generated", StaticFiles(directory="generated"), name="generated")
 G = Generator().to('cuda')
-G.load_state_dict(torch.load(r'C:\Users\Mypc\OneDrive\Desktop\AniGAN\codebase\checkpoints\generator_epoch_20.pth', map_location='cuda'))
+G.load_state_dict(torch.load(r'C:\Users\Mypc\OneDrive\Desktop\AniGAN\codebase\checkpoints\generator_epoch_20.pth', map_location='cpu'))
 D = Discriminator().to('cuda')
-D.load_state_dict(torch.load(r'C:\Users\Mypc\OneDrive\Desktop\AniGAN\codebase\checkpoints\discriminator_epoch_20.pth', map_location='cuda'))
+D.load_state_dict(torch.load(r'C:\Users\Mypc\OneDrive\Desktop\AniGAN\codebase\checkpoints\discriminator_epoch_20.pth', map_location='cpu'))
 model = DCGAN(G, D)
 
 
