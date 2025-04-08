@@ -29,6 +29,9 @@ D.load_state_dict(torch.load(checkpoint_path, map_location='cpu'))
 model = DCGAN(G, D)
 
 
+@app.get("/")
+def root():
+    return {"message": "AniGAN is alive!"}
 
 @app.get('/generate')
 def generate():
