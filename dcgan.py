@@ -88,6 +88,17 @@ class DCGAN(nn.Module):
                     callback(epoch)
                 if((epoch+1)!=epochs): 
                     bar(-n)
+
+    def create(self):
+        inp_vector = torch.randn(4096, self.generator.noise_dim, 1, 1, device=self.device)
+        images = self.generator(inp_vector).detach()
+        pred = self.discriminator(images).detach()
+        values, indices = torch.max(pred, dim=0)
+        print(values[0])
+        img = images[indices[0]]
+        return img
+
+
         
     
 if __name__ == '__main__':
