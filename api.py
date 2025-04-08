@@ -21,9 +21,9 @@ app.add_middleware(
 )
 app.mount("/generated", StaticFiles(directory="generated"), name="generated")
 G = Generator().to('cpu')
-G.load_state_dict(r'C:\Users\Mypc\OneDrive\Desktop\AniGAN\codebase\checkpoints\generator_epoch_20.pth')
+G.load_state_dict(torch.load(r'checkpoints\generator_epoch_20.pth'))
 D = Discriminator().to('cpu')
-D.load_state_dict(r'C:\Users\Mypc\OneDrive\Desktop\AniGAN\codebase\checkpoints\discriminator_epoch_20.pth')
+D.load_state_dict(torch.load(r'checkpoints\discriminator_epoch_20.pth'))
 model = DCGAN(G, D)
 
 
