@@ -27,6 +27,7 @@ D = Discriminator().to('cpu')
 checkpoint_path = os.path.join("checkpoints", "discriminator_epoch_20.pth")
 D.load_state_dict(torch.load(checkpoint_path, map_location='cpu'))
 model = DCGAN(G, D)
+model.device = "cpu"
 
 
 @app.get("/")
