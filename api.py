@@ -35,8 +35,12 @@ def root():
 
 @app.get('/generate')
 def generate():
-    img = model.create()
-    img_path = f"generated/{uuid.uuid4().hex}.png"
-    os.makedirs("generated", exist_ok=True)
-    save_image(img, img_path, normalize=True)
-    return JSONResponse(content={"url": f"/{img_path}"})
+    try:
+        img = model.create()
+        img_path = f"generated/{uuid.uuid4().hex}.png"
+        os.makedirs("generated", exist_ok=True)
+        save_image(img, img_path, normalize=True)
+        return JSONResponse(content={"url": f"/{img_path}"})
+    except Exception as e:
+        print("Error during generation:", str(e))  # This will show up in Railway logs
+        return JSONResponse(content={"error": str(e)}, status_code=500)
