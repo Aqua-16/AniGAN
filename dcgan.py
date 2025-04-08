@@ -8,7 +8,6 @@ import torch.nn as nn
 import torch.optim as optim
 import generator
 import discriminator
-import data
 import callbacks as c
 from alive_progress import alive_bar
 
@@ -99,38 +98,3 @@ class DCGAN(nn.Module):
         return img
 
 
-        
-    
-if __name__ == '__main__':
-
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    transform = transforms.Compose([
-        transforms.Resize((64,64)),
-        transforms.ToTensor(),
-        transforms.Normalize((0.5,0.5,0.5),(0.5,0.5,0.5)),
-    ])
-
-    dataset = data.CustomDataset(root_dir = "..\images", transform=transform)
-    dataloader = DataLoader(dataset, batch_size=64, shuffle=True)
-
-    G = generator.Generator().to(device)
-    D = discriminator.Discriminator().to(device)
-
-    g_optimizer = optim.Adam(G.parameters(), lr = 0.0002, betas = [0.5, 0.999])
-    d_optimizer = optim.Adam(D.parameters(), lr = 0.0002, betas = [0.5, 0.999])
-    loss = nn.BCELoss()
-
-    model = DCGAN(G, D)
-    model.compile(g_optimizer, d_optimizer, loss)
-
-    n = int(input("Epochs: "))
-    if(n==0):
-        real_images = next(iter(dataloader)).to(device)
-        loss_dict = model.train_step(real_images)
-
-        print(loss_dict)
-    else:
-        
-        vis_callback = c.VisualizeGeneratorCallback(1, G, 64, device)
-        save_callback = c.CheckpointCallback(1, G, D)
-        model.train(dataloader, n, callbacks=[vis_callback, save_callback])
