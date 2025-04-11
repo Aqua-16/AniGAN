@@ -89,5 +89,7 @@ You can test it by visiting: `http://localhost:8000/generate`
 
 [Unsupervised Representation Learning with Deep Convolutional Generative Adversarial Networks](https://arxiv.org/abs/1511.06434)
 
+[Anime Faces Dataset](https://www.kaggle.com/datasets/splcher/animefacedataset)
+
 ---
 Thank you for checking out my project!
