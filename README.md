@@ -3,11 +3,11 @@
 AniGAN is an image generation API built using the Deep Convolutional Generative Adversarial Network (DCGAN) architecture. This project is based on the official DCGAN research paper and is designed with an API-first approach for simplicity and flexibility.
 
 ![image](https://github.com/user-attachments/assets/2ba654ef-baed-4d87-b23c-f676b4125b16)
-`Original`
+\- Original
 
 
 ![image](https://github.com/user-attachments/assets/8362ccff-c146-4d56-9c54-fccf540cabc4)
-`AI-Generated`
+\- AI-Generated
 
 ## Features
 
